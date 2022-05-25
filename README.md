@@ -28,10 +28,6 @@
 # 运行
 * 需要 `curses` 库。
 
-* 修改 `client.py` 22 行的 host 字段，改为 server 的 ip，工作在局域网环境下。
-
-* 保证 `client.py` 22 行的 post 字段与 `server.py` 18 行 post 字段一致。
-
 * 首先运行 `server.py`，根据提示输入玩家人数。
 
 * 运行 `client.py` 启动客户端，启动数量与玩家人数相同。
