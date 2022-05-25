@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-  
 import json
 import curses
+import argparse
 from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
 
@@ -19,8 +20,7 @@ class sockClient(object):
         self._message_queue = []
         self._last_desk = None
 
-    def init(self, host="192.168.101.56", post=15961):
-    #def init(self, host="localhost", post=15961):
+    def init(self, host="localhost", post=15961):
         self.connect(host, post)
         self._stdscr = curses.initscr()
         self.set_win()
@@ -138,9 +138,14 @@ class sockClient(object):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--host', type=str, default='localhost')
+    parser.add_argument('--post', type=int, default=15961)
+    args = parser.parse_known_args()[0]
+    
     client = sockClient()
     # init
-    client.init()
+    client.init(args.host, args.post)
 
     # run Loop
     try:

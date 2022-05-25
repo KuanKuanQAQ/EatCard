@@ -2,7 +2,7 @@
 import random
 
 class Game(object):
-    def __init__(self, player_num, name2sock, card_num=104, line_num=5):
+    def __init__(self, player_num, name2sock, name2score=None, card_num=104, line_num=5):
         assert player_num < 10, 'too many players'
         assert player_num == len(name2sock), 'fatal error'
         player_num2card_num = {2:64, 3:84, 4:84, 5:84, 6:84, 7:104, 8:104, 9:104}
@@ -10,6 +10,7 @@ class Game(object):
         self.player_num = player_num
         self.card_num = player_num2card_num[player_num]
         self.line_num = line_num
+        self.name2score = name2score
         print('*'*10)
         print('player_num:', self.player_num)
         print('card_num:', self.card_num)
@@ -26,7 +27,10 @@ class Game(object):
         shuffle_card = list(range(1,self.card_num+1))
         random.shuffle(shuffle_card)
         for i, name in enumerate(self.player_name):
-            self.player2score[name] = 0
+            if self.name2score != None:
+                self.player2score[name] = name2score[name]
+            else:
+                self.player2score[name] = 0
             self.player2hand[name] = sorted(shuffle_card[i * 10: i * 10 + 10])
         for i in range(self.line_num):
             self.line2desk[i] = [shuffle_card[self.player_num * 10 + i]]
