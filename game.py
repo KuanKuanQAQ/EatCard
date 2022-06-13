@@ -28,7 +28,7 @@ class Game(object):
         random.shuffle(shuffle_card)
         for i, name in enumerate(self.player_name):
             if self.name2score != None:
-                self.player2score[name] = name2score[name]
+                self.player2score[name] = self.name2score[name]
             else:
                 self.player2score[name] = 0
             self.player2hand[name] = sorted(shuffle_card[i * 10: i * 10 + 10])
