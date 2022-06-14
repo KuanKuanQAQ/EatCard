@@ -72,54 +72,59 @@ class sockClient(object):
     def print_message(self):
         while True:
             # 堵塞
-            message = self._sock.recv(1024).decode()
-            if not message:
+            messages = self._sock.recv(1024).decode()
+            if not messages:
                 break
-            message_field = message[0]
-            message = message[2:]
-            if message_field == 'F':    
-                if len(self._message_queue) >= self._message_queue_len:
-                    self._message_queue.pop(0)
-                self._message_queue.append(message)
-                for i in range(len(self._message_queue)):
-                    index = i + self._print_index
-                    m = self._message_queue[i]
-                    self._stdscr.addstr(index, 3, ' '*100, curses.color_pair(1))
-                    self._stdscr.addstr(index, 3, m, curses.color_pair(1))
-            if message_field == 'D':
-                message = message[5:]
-                json_obj = json.loads(message)
-                for i, line in enumerate(json_obj):
-                    index = i + self._desk_index
-                    m = str(json_obj[line])[1:-1]
-                    self._stdscr.addstr(index, 3, ' '*100, curses.color_pair(1))
-                    self._stdscr.addstr(index, 3, m, curses.color_pair(1))
-                if self._last_desk:
-                    for i, line in enumerate(self._last_desk):
-                        index = i + self._desk_index
-                        m = str(self._last_desk[line])[1:-1]
-                        self._stdscr.addstr(index, 43, ' '*50, curses.color_pair(1))
-                        self._stdscr.addstr(index, 43, m, curses.color_pair(1))
-                self._last_desk = json_obj
-            if message_field == 'H':
-                message = message[5:]
-                json_obj = json.loads(message)
-                m = str(json_obj)[1:-1]
-                self._stdscr.addstr(self._hand_index, 3, ' '*100, curses.color_pair(1))
-                self._stdscr.addstr(self._hand_index, 3, m, curses.color_pair(1))
-            if message_field == 'S':
-                message = message[5:]
-                json_obj = json.loads(message)
-                m = str(json_obj)[1:-1]
-                self._stdscr.addstr(self._score_index, 3, ' '*100, curses.color_pair(1))
-                self._stdscr.addstr(self._score_index, 3, m, curses.color_pair(1))
-            if message_field == 'I':
-                m = message
-                self._stdscr.addstr(self._input_index+1, 3, ' '*100, curses.color_pair(1))
-                self._stdscr.addstr(self._input_index+1, 3, m, curses.color_pair(1))
+            message_list = messages.split('|')
+            for mp, message in enumerate(message_list[1:]):
+                message_field = message_list[mp][-1]
+                if mp != len(message_list) - 2:
+                    message = message[:-1]
+                self.print_format(message_field, message)
+                self._stdscr.addstr(self._input_index, 0, "ME: ", curses.color_pair(1))
+                self._stdscr.refresh()
 
-            self._stdscr.addstr(self._input_index, 0, "ME: ", curses.color_pair(1))
-            self._stdscr.refresh()
+    def print_format(self, message_field, message):
+        if message_field == 'F':    
+            if len(self._message_queue) >= self._message_queue_len:
+                self._message_queue.pop(0)
+            self._message_queue.append(message)
+            for i in range(len(self._message_queue)):
+                index = i + self._print_index
+                m = self._message_queue[i]
+                self._stdscr.addstr(index, 3, ' '*100, curses.color_pair(1))
+                self._stdscr.addstr(index, 3, m, curses.color_pair(1))
+        if message_field == 'D':
+            message = message[5:]
+            json_obj = json.loads(message)
+            for i, line in enumerate(json_obj):
+                index = i + self._desk_index
+                m = str(json_obj[line])[1:-1]
+                self._stdscr.addstr(index, 3, ' '*100, curses.color_pair(1))
+                self._stdscr.addstr(index, 3, m, curses.color_pair(1))
+            if self._last_desk:
+                for i, line in enumerate(self._last_desk):
+                    index = i + self._desk_index
+                    m = str(self._last_desk[line])[1:-1]
+                    self._stdscr.addstr(index, 43, ' '*50, curses.color_pair(1))
+                    self._stdscr.addstr(index, 43, m, curses.color_pair(1))
+            self._last_desk = json_obj
+        if message_field == 'H':
+            message = message[5:]
+            json_obj = json.loads(message)
+            m = str(json_obj)[1:-1]
+            self._stdscr.addstr(self._hand_index, 3, ' '*100, curses.color_pair(1))
+            self._stdscr.addstr(self._hand_index, 3, m, curses.color_pair(1))
+        if message_field == 'S':
+            message = message[5:]
+            json_obj = json.loads(message)
+            m = str(json_obj)[1:-1]
+            self._stdscr.addstr(self._score_index, 3, ' '*100, curses.color_pair(1))
+            self._stdscr.addstr(self._score_index, 3, m, curses.color_pair(1))
+        if message_field == 'I':
+            m = message
+            self._stdscr.addstr(self._input_index+1, 3, ' '*100, curses.color_pair(1))
+            self._stdscr.addstr(self._input_index+1, 3, m, curses.color_pair(1))
 
     def input(self):
         self._stdscr.nodelay(0)
@@ -139,7 +144,7 @@ class sockClient(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host', type=str, default='localhost')
+    parser.add_argument('--host', type=str, default='114.116.102.182')
     parser.add_argument('--post', type=int, default=15961)
     args = parser.parse_known_args()[0]
     

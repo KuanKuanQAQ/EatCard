@@ -16,7 +16,7 @@ class sockServer(object):
         self._client_sock2name = {}
         self.thread_cnt = 0
 
-    def init(self, host='', post=15961):
+    def init(self, host='', post=10021):
         # Run the erver
         sock = socket(AF_INET,SOCK_STREAM)
         sock.bind((host, post))
@@ -125,6 +125,7 @@ class sockServer(object):
                 self.sendall('start the next round.')
                 self.game_board = Game(self._nplayer, self._client_name2sock, name2score=self.game_board.player2score)
                 self.send_game()
+                played_cards_num = 0
 
 
     def send_game(self):
@@ -138,7 +139,7 @@ class sockServer(object):
             client_sock = self._client_name2sock[client_name]
             message = json.dumps(self.game_board.player2hand[client_name])
             message = ('H' + '|' + 'sys' + ': ' + str(message))
-            print(message+'('+client_name+')')
+            print(message+' ('+client_name+')')
             message = message.encode()
             client_sock.sendall(message)
 
