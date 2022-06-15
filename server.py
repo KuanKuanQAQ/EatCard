@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-  
 import json
+import socket
 import argparse
 from queue import Queue
 from threading import Thread, Condition
-from socket import socket, AF_INET, SOCK_STREAM
 
 from game import Game
 
@@ -18,7 +18,8 @@ class sockServer(object):
 
     def init(self, host='', post=10021):
         # Run the erver
-        sock = socket(AF_INET,SOCK_STREAM)
+        sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((host, post))
         sock.listen(5)
         self._nplayer = int(input('input the # of players...\n'))

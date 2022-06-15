@@ -4,7 +4,7 @@ import random
 class Game(object):
     def __init__(self, player_num, name2sock, name2score=None, card_num=104, line_num=5):
         assert player_num < 10, 'too many players'
-        assert player_num == len(name2sock), 'fatal error'
+        #assert player_num == len(name2sock), 'fatal error'
         player_num2card_num = {2:64, 3:84, 4:84, 5:84, 6:84, 7:104, 8:104, 9:104}
         
         self.player_num = player_num
